@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/intro_screen.dart';
+//colocar import do cadastro e login
+import 'screens/home_screen.dart'; 
 
 void main() {
   runApp(const PokeApp());
@@ -11,7 +13,7 @@ class PokeApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'PokeApp',
+      title: 'PokéApp',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.redAccent),
@@ -19,7 +21,7 @@ class PokeApp extends StatelessWidget {
       ),
       home: const IntroScreen(),
       routes: {
-        '/home': (context) => const Placeholder(), //aqui é a rota esperando proxima tela
+        '/home': (context) => const HomeScreen(), // rota para a Home(não é a final rota)
       },
     );
   }
