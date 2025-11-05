@@ -20,10 +20,10 @@ class IntroScreen extends StatelessWidget {
           ),
         ),
 
-        child: SingleChildScrollView( // 🔹 Permite rolagem e evita overflow
+        child: SingleChildScrollView( //Retira linha de emergência evita overflow
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              minHeight: size.height, // 🔹 Faz o fundo ocupar toda a tela
+              minHeight: size.height, //ocupa toda tela 
             ),
             child: Padding(
               padding: EdgeInsets.symmetric(
