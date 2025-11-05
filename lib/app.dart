@@ -5,3 +5,4 @@ void main() async {
   final p = await api.fetchPokemonDetail('pikachu');
   print('${p.name}: ${p.description}');
 }
+//teste da API comentar depois
