@@ -12,6 +12,9 @@ dependencies:
   flutter:
     sdk: flutter
 
+
+  string_similarity: ^2.0.0
+
   http: ^0.13.6
   cupertino_icons: ^1.0.8
   cached_network_image: ^3.3.1
