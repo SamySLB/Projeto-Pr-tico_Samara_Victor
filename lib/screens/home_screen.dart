@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../models/pokemon.dart';
 import '../service/api_service.dart';
 import '../utils/pokemon_of_month.dart';
-import '../widgets/pokemon_title.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -37,17 +36,15 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: const Text(
-          'PokéFlix',
+          'PokeApp',
           style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.search, color: Colors.white),
-            onPressed: () {}, // Tela de busca futura
-          ),
-          IconButton(
             icon: const Icon(Icons.settings, color: Colors.white),
-            onPressed: () {}, // Tela de configurações futura
+            onPressed: () {
+              //configurações
+            },
           ),
         ],
       ),
@@ -76,40 +73,44 @@ class _HomeScreenState extends State<HomeScreen> {
           return RefreshIndicator(
             color: Colors.redAccent,
             onRefresh: () async => setState(() {}),
-            child: ListView(
-              children: [
-                _HighlightSection(pokemon: destaque),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Text(
-                    "Pokémons",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _HighlightSection(pokemon: destaque),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Text(
+                      "Pokémons",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                _PokemonCarousel(pokemons: pokemons),
-                if (_currentLimit < 100)
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: _loadMore,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 40,
-                          vertical: 16,
+                  _PokemonGrid(pokemons: pokemons),
+                  if (_currentLimit < 100)
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: _loadMore,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 40,
+                            vertical: 16,
+                          ),
+                        ),
+                        child: const Text(
+                          "Carregar mais",
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
-                      child: const Text(
-                        "Carregar mais",
-                        style: TextStyle(color: Colors.white),
-                      ),
                     ),
-                  ),
-                const SizedBox(height: 20),
-              ],
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           );
         },
@@ -127,12 +128,33 @@ class _HighlightSection extends StatelessWidget {
     return Stack(
       alignment: Alignment.bottomLeft,
       children: [
-        _buildImage(pokemon.imageUrl ?? ''),
-        _buildGradient(),
+        Image.network(
+          pokemon.imageUrl ?? '',
+          height: 250,
+          width: double.infinity,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => Container(
+            height: 250,
+            color: Colors.grey[900],
+            child: const Center(
+              child: Icon(Icons.help_outline, color: Colors.white54, size: 64),
+            ),
+          ),
+        ),
+        Container(
+          height: 250,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+            ),
+          ),
+        ),
         Padding(
           padding: const EdgeInsets.all(16),
           child: Text(
-            "⭐ Pokémon do mês: ${pokemon.name.toUpperCase()}",
+            "Pokémon do mês: ${pokemon.name.toUpperCase()}",
             style: const TextStyle(
               color: Colors.white,
               fontSize: 20,
@@ -143,59 +165,108 @@ class _HighlightSection extends StatelessWidget {
       ],
     );
   }
-
-  Widget _buildImage(String imageUrl) {
-    return Image.network(
-      imageUrl,
-      height: 250,
-      width: double.infinity,
-      fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => Container(
-        height: 250,
-        color: Colors.grey[900],
-        child: const Center(
-          child: Icon(Icons.help_outline, color: Colors.white54, size: 64),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGradient() {
-    return Container(
-      height: 250,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.black.withOpacity(0.7), Colors.transparent],
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-        ),
-      ),
-    );
-  }
 }
 
-class _PokemonCarousel extends StatelessWidget {
+class _PokemonGrid extends StatelessWidget {
   final List<Pokemon> pokemons;
-  const _PokemonCarousel({required this.pokemons});
+  const _PokemonGrid({required this.pokemons});
+
+  void _showPopup(BuildContext context, Pokemon p) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.grey[900],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          p.name.toUpperCase(),
+          style: const TextStyle(
+            color: Colors.redAccent,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.network(p.imageUrl ?? '', height: 120),
+            const SizedBox(height: 10),
+            Text(
+              p.description ?? 'Sem descrição disponível 😅',
+              style: const TextStyle(color: Colors.white70),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Tipos: ${p.types.join(', ')}',
+              style: const TextStyle(color: Colors.white54, fontSize: 13),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            child: const Text('Fechar', style: TextStyle(color: Colors.redAccent)),
+            onPressed: () => Navigator.pop(ctx),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 220,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: pokemons.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          final p = pokemons[index];
-          return PokemonTile(
-            name: p.name,
-            imageUrl: p.imageUrl,
-            onTap: () =>
-                Navigator.pushNamed(context, '/detail', arguments: p.name),
-          );
-        },
+    return GridView.builder(
+      itemCount: pokemons.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, // duas colunas estilo Pinterest
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 0.9,
       ),
+      itemBuilder: (context, index) {
+        final p = pokemons[index];
+        return GestureDetector(
+          onTap: () => _showPopup(context, p),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[900],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              children: [
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      p.imageUrl ?? '',
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      errorBuilder: (_, __, ___) => const Icon(
+                        Icons.help_outline,
+                        color: Colors.white54,
+                        size: 48,
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Text(
+                    p.name.toUpperCase(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
