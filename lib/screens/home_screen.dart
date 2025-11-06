@@ -40,6 +40,15 @@ class _HomeScreenState extends State<HomeScreen> {
           style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
         ),
         actions: [
+           IconButton(
+    icon: const Icon(Icons.search, color: Colors.white),
+    onPressed: () {
+      showSearch(
+        context: context,
+        delegate: PokemonSearchDelegate(api: api),
+      );
+    },
+  ),
           IconButton(
             icon: const Icon(Icons.settings, color: Colors.white),
             onPressed: () {
