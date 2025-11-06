@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/pokemon.dart';
 import '../service/api_service.dart';
 import '../utils/pokemon_of_month.dart';
+import '../screens/pokemon_search.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -45,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
     onPressed: () {
       showSearch(
         context: context,
-        delegate: PokemonSearchDelegate(api: api),
+        delegate: PokemonSearch(api: api),
       );
     },
   ),
@@ -69,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if (snapshot.hasError) {
             return Center(
               child: Text(
-                'Erro ao carregar Pokémons 😕',
+                'Pokemons não encontrados',
                 style: const TextStyle(color: Colors.white70),
               ),
             );
@@ -112,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         child: const Text(
-                          "Carregar mais",
+                          "+",
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
