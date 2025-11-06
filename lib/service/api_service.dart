@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/pokemon.dart';
@@ -6,7 +5,6 @@ import '../models/pokemon.dart';
 class ApiService {
   static const baseUrl = 'https://pokeapi.co/api/v2';
 
-  
   Future<List<String>> fetchPokemonNames({int limit = 50}) async {
     final response = await http.get(Uri.parse('$baseUrl/pokemon?limit=$limit'));
     if (response.statusCode != 200) throw Exception('Erro ao carregar Pokémons');
@@ -22,30 +20,45 @@ class ApiService {
 
     final pokemonData = jsonDecode(pokemonResponse.body);
 
-    
+    final id = pokemonData['id']; 
     final imageUrl = pokemonData['sprites']['other']['official-artwork']['front_default'];
     final types = (pokemonData['types'] as List)
         .map((t) => t['type']['name'].toString())
         .toList();
 
-    final speciesResponse = await http.get(Uri.parse('$baseUrl/pokemon-species/$name'));
-    String description = '';
+    //Descrição do Pokémon em português
+    final speciesResponse = await http.get(Uri.parse('$baseUrl/pokemon-species/$id'));
+    String? description;
+
     if (speciesResponse.statusCode == 200) {
       final speciesData = jsonDecode(speciesResponse.body);
       final entries = speciesData['flavor_text_entries'] as List;
-      final englishEntry = entries.firstWhere(
-        (e) => e['language']['name'] == 'en',
+
+      final ptEntry = entries.firstWhere(
+        (e) => e['language']['name'] == 'pt' || e['language']['name'] == 'pt-BR',
         orElse: () => null,
       );
-      if (englishEntry != null) {
-        description = englishEntry['flavor_text']
+
+      if (ptEntry != null) {
+        description = ptEntry['flavor_text']
+            .toString()
+            .replaceAll('\n', ' ')
+            .replaceAll('\f', ' ');
+      } else {
+        // se não tiver em português pega em inglês
+        final enEntry = entries.firstWhere(
+          (e) => e['language']['name'] == 'en',
+          orElse: () => null,
+        );
+        description = enEntry?['flavor_text']
+            ?.toString()
             .replaceAll('\n', ' ')
             .replaceAll('\f', ' ');
       }
     }
 
     return Pokemon(
-      id: pokemonData['id'],
+      id: id,
       name: pokemonData['name'],
       imageUrl: imageUrl,
       types: types,
@@ -53,4 +66,3 @@ class ApiService {
     );
   }
 }
-

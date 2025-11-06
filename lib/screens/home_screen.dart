@@ -190,7 +190,7 @@ class _PokemonGrid extends StatelessWidget {
             Image.network(p.imageUrl ?? '', height: 120),
             const SizedBox(height: 10),
             Text(
-              p.description ?? 'Sem descrição disponível 😅',
+              p.description ?? 'Pokemon desconhecido',
               style: const TextStyle(color: Colors.white70),
               textAlign: TextAlign.center,
             ),
@@ -219,10 +219,10 @@ class _PokemonGrid extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 12),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // duas colunas estilo Pinterest
+        crossAxisCount: 2, 
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
-        childAspectRatio: 0.9,
+        childAspectRatio: 1.1,
       ),
       itemBuilder: (context, index) {
         final p = pokemons[index];
