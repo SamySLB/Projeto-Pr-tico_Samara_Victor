@@ -13,6 +13,7 @@ Um aplicativo responsivo com layout feito para quem ama serviços de streamers e
 - **Material 3**
 - **FutureBuilder / Async Patterns**
 - **Clean Code + princípios SOLID (simplificados)**
+- **Padrão de projeto criacional Singleton**
 
 ---
 
