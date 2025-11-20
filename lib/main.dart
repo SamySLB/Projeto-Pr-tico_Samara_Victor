@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'screens/intro_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/setting_screen.dart';
+import 'screens/profile_screen.dart';
 
 void main() {
   runApp(const PokeApp());
@@ -50,7 +53,11 @@ class PokeApp extends StatelessWidget {
       ),
       home: const IntroScreen(),
       routes: {
+        '/intro': (context) => const IntroScreen(),
         '/home': (context) => const HomeScreen(),
+        '/login': (context) => const LoginPage(),
+        '/settings': (context) => const ConfigPage(),
+        '/profile': (context) => const ProfilePage(),
       },
     );
   }
